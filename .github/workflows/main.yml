@@ -28,7 +28,7 @@ jobs:
           context: ./backend
           file: ./backend/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/project2/backend:latest
+          tags: ghcr.io/mustafa12ah/project2/backend:latest  # Forced to strictly lowercase
 
   deploy:
     needs: build-and-push
