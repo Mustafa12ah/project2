@@ -1,0 +1,51 @@
+name: Build to GHCR and Deploy Locally
+
+on:
+  push:
+    branches: [ "main" ]
+
+# Grants permissions to write packages to GHCR
+permissions:
+  packages: write
+  contents: read
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Backend Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+            ghcr.io/${{ github.repository }}/backend:latest
+  deploy:
+    needs: build-and-push
+    runs-on: self-hosted  # <--- This hands the job over to your PC runner!
+    steps:
+      - name: Checkout configuration files
+        uses: actions/checkout@v4
+
+      - name: Log in to GHCR on PC
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull and Run App
+        run: |
+          cd ~/Desktop/project2/Expense_Tracker
+          docker compose pull backend
+          docker compose up -d backend
