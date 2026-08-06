@@ -28,6 +28,7 @@ jobs:
           context: .
           file: ./backend/Dockerfile
           push: true
+          no-cache: true
           tags: ghcr.io/mustafa12ah/project2/backend:latest  # Forced to strictly lowercase
 
   deploy:
