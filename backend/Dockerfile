@@ -12,18 +12,22 @@ RUN pip install --no-cache-dir -r Expense_Tracker/backend/requirements.txt gunic
 # Copy your backend source code
 COPY backend/ Expense_Tracker/backend/
 
-# --- FIX: Place templates and static folders inside the exact directory Flask looks for them ---
+# --- TARGET 1: Place files inside the nested folder context ---
 COPY frontend/templates/ Expense_Tracker/backend/templates/
 COPY frontend/static/ Expense_Tracker/backend/static/
 
-# --- Keep root copies just in case ---
+# --- TARGET 2: Place copies inside the root /app context ---
 COPY frontend/templates/ /app/templates/
 COPY frontend/static/ /app/static/
+
+# --- TARGET 3: Place copies inside a standalone /app/backend context ---
+COPY frontend/templates/ /app/backend/templates/
+COPY frontend/static/ /app/backend/static/
 
 # Set environment paths so Python handles your root modules
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV PYTHONPATH=/app
+ENV PYTHONPATH=/app/Expense_Tracker/backend:/app
 
 EXPOSE 8000
 
